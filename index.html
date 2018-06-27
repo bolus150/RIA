@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Zaliczenie ćwiczenia</title>
+</head>
+<body>
+    <div>
+
+        <form action="">
+            x = <input type="text" id="x" />
+            y = <input type="text" id="y" />
+            <input type="button" id="calcJq" value="Call API (jQuery)">
+            <input type="button" id="calcVa" value="Call API (vanilla JS)">
+        </form>
+
+        <br />
+        <br />
+        <div id="alert"></div>
+        x + y = <span id="sum"></span><br />
+        x - y = <span id="difference"></span><br />
+        x * y = <span id="product"></span><br />
+        x / y = <span id="quotient"></span><br />
+    </div>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $('#calcJq').click(function () {
+                var x = $('#x').val();
+                var y = $('#y').val();
+
+                $.ajax({
+                    method: "GET",
+                    url: "api/api.php",
+                    data: { x: x, y: y }
+                }).done(function( response ) {
+                    var res = jQuery.parseJSON( response );
+                    if (res.code == 200) {
+                        $('#sum').text(res.result.sum);
+                        $('#difference').text(res.result.difference);
+                        $('#product').text(res.result.product);
+                        $('#quotient').text(res.result.quotient);
+                    }
+
+                    $('#alert').text(res.msg);
+                });
+            });
+        });
+
+        document.getElementById("calcVa").addEventListener("click", function( ) {
+            var x = document.getElementById('x').value;
+            var y = document.getElementById('y').value;
+            var params = "x="+x+"&y="+y;
+            var req = new XMLHttpRequest();
+            req.open('GET', 'api/api.php?'+params, false);
+            req.send(null);
+
+            var res = JSON.parse( req.responseText );
+
+            if (res.code == 200) {
+                document.getElementById('sum').innerHTML = res.result.sum;
+                document.getElementById('difference').innerHTML = res.result.difference;
+                document.getElementById('product').innerHTML = res.result.product;
+                document.getElementById('quotient').innerHTML = res.result.quotient;
+            }
+
+            document.getElementById('alert').innerHTML = res.msg;
+
+        }, false);
+    </script>
+</body>
+</html>
